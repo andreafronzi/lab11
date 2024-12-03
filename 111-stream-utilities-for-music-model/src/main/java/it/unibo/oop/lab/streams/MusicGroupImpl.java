@@ -56,17 +56,17 @@ public final class MusicGroupImpl implements MusicGroup {
 
     @Override
     public OptionalDouble averageDurationOfSongs(final String albumName) {
-        return null;
+        return OptionalDouble.empty();
     }
 
     @Override
     public Optional<String> longestSong() {
-        return null;
+        return Optional.empty();
     }
 
     @Override
     public Optional<String> longestAlbum() {
-        return null;
+        return Optional.empty();
     }
 
     private static final class Song {

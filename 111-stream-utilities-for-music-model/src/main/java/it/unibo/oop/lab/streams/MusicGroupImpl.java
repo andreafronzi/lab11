@@ -1,5 +1,7 @@
 package it.unibo.oop.lab.streams;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -31,17 +33,26 @@ public final class MusicGroupImpl implements MusicGroup {
 
     @Override
     public Stream<String> orderedSongNames() {
-        return null;
+        return Collections.unmodifiableSet(this.songs).stream()
+            .map(Song::getSongName)
+            .sorted(String::compareTo);
     }
 
     @Override
     public Stream<String> albumNames() {
-        return null;
+        return Collections.unmodifiableSet(this.songs).stream().filter()
     }
 
     @Override
     public Stream<String> albumInYear(final int year) {
-        return null;
+        return Collections.unmodifiableMap(this.albums).values().stream().
+        
+        
+        Collections.unmodifiableSet(this.songs).stream()
+        .filter(y -> y.equals(year))
+        .map(Song::getAlbumName)
+        .map(Optional::get)
+        .distinct();
     }
 
     @Override

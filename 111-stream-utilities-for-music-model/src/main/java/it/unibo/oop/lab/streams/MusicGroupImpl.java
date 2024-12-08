@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 /**
- *
+ * This class stands for the album and songs of a provided group
  */
 public final class MusicGroupImpl implements MusicGroup {
 
@@ -40,34 +40,41 @@ public final class MusicGroupImpl implements MusicGroup {
 
     @Override
     public Stream<String> albumNames() {
-        return Collections.unmodifiableSet(this.songs).stream().filter()
+        return this.albums.keySet().stream();
     }
 
     @Override
     public Stream<String> albumInYear(final int year) {
-        return Collections.unmodifiableMap(this.albums).values().stream().
-        
-        
-        Collections.unmodifiableSet(this.songs).stream()
-        .filter(y -> y.equals(year))
-        .map(Song::getAlbumName)
-        .map(Optional::get)
-        .distinct();
+        return this.albums.entrySet()
+            .stream()
+            .filter(m -> m.getValue().equals(year))
+            .map(Map.Entry::getKey);
     }
 
     @Override
     public int countSongs(final String albumName) {
-        return -1;
+        return (int) this.songs.stream()
+            .map(Song::getAlbumName)
+            .filter(Optional::isPresent)
+            .map(Optional<String>::get)
+            .filter(a -> a.equals(albumName))
+            .count();
     }
 
     @Override
     public int countSongsInNoAlbum() {
-        return -1;
+        return (int) this.songs.stream()
+            .map(Song::getAlbumName)
+            .filter(s -> !s.isPresent())
+            .count();
     }
 
     @Override
     public OptionalDouble averageDurationOfSongs(final String albumName) {
-        return OptionalDouble.empty();
+        return this.songs.stream()
+            .filter(s -> s.getAlbumName().get().equals(albumName))
+            .mapToDouble(Song::getDuration)
+            .average();
     }
 
     @Override

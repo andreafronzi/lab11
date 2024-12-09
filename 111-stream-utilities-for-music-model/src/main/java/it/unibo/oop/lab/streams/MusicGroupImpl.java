@@ -1,13 +1,17 @@
 package it.unibo.oop.lab.streams;
 
+import java.security.KeyStore.Entry;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -77,14 +81,22 @@ public final class MusicGroupImpl implements MusicGroup {
             .average();
     }
 
+    /*the used map method is provided by Optional class rather that Stream class.*/
     @Override
     public Optional<String> longestSong() {
-        return Optional.empty();
+        return this.songs.stream()
+            .max((s1, s2) -> Double.valueOf(s1.getDuration()).compareTo(Double.valueOf(s2.getDuration())))
+            .map(Song::getSongName);
     }
 
     @Override
     public Optional<String> longestAlbum() {
-        return Optional.empty();
+        return this.songs.stream()
+            .filter(s -> s.getAlbumName().isPresent())
+            .collect(Collectors.groupingBy(Song::getAlbumName, Collectors.summingDouble(Song::getDuration)))
+            .entrySet().stream()
+            .max(Comparator.comparingDouble(Map.Entry::getValue)) //confronta le Entry in base alla durata totale dell'album e ritorna un optional
+            .flatMap(Map.Entry::getKey);                          //dall'optional Entry ritorna la chiave.                   
     }
 
     private static final class Song {

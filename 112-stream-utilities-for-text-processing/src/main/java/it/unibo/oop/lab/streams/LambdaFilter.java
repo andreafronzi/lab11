@@ -7,8 +7,12 @@ import java.awt.GridLayout;
 import java.awt.LayoutManager;
 import java.awt.Toolkit;
 import java.io.Serial;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.StringTokenizer;
 import java.util.function.Function;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -34,6 +38,8 @@ import javax.swing.JTextArea;
  */
 public final class LambdaFilter extends JFrame {
 
+    private static final Integer INSTANCE = Integer.valueOf(1);
+
     @Serial
     private static final long serialVersionUID = 1760990730218643730L;
 
@@ -43,7 +49,13 @@ public final class LambdaFilter extends JFrame {
          */
         IDENTITY("No modifications", Function.identity()),
         TOLOWER("To lower case", String::toLowerCase),
-        COUNT("Counter of Character", s -> s.chars())
+        COUNTCHARACTER("Counter of Character", s -> Long.valueOf(s.chars().count()).toString()),
+        ORDERWORD("Order Words", s -> Arrays.asList(s.split(" ")).stream().sorted().collect(Collectors.joining("\n"))),
+        COUNTWORD("Count istance of Words", s -> {
+            final var listOfWords = Arrays.asList(s.split(" "));
+            return listOfWords.stream()
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.summingInt(string -> INSTANCE))).toString();
+        });
 
         private final String commandName;
         private final Function<String, String> fun;
